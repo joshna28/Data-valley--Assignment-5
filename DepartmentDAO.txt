@@ -1,0 +1,57 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class DepartmentDAO {
+    // JDBC URL, username, and password of MySQL server
+    private static final String URL = "jdbc:mysql://localhost:3306/departments";
+    private static final String USER = "your_username";
+    private static final String PASSWORD = "your_password";
+
+    // SQL query to insert a department
+    private static final String INSERT_QUERY = "INSERT INTO department (id, name) VALUES (?, ?)";
+
+    public static void main(String[] args) {
+        // Sample department data
+        Department department = new Department(1, "IT");
+
+        // Try-with-resources to ensure connection is closed
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_QUERY)) {
+            // Set parameters for PreparedStatement
+            preparedStatement.setInt(1, department.getId());
+            preparedStatement.setString(2, department.getName());
+
+            // Execute the query
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            // Check if the insertion was successful
+            if (rowsAffected > 0) {
+                System.out.println("Department inserted successfully!");
+            } else {
+                System.out.println("Failed to insert department.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+class Department {
+    private int id;
+    private String name;
+
+    public Department(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+}
